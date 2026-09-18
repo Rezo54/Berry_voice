@@ -1,0 +1,1 @@
+export default function Home(){return <main style={{fontFamily:"system-ui",maxWidth:900,margin:"48px auto",padding:24}}><h1>Berry Voice</h1><p>TES — Task Expert Systems</p><h2>Day 1 foundation</h2><p>Development baseline for Berry Order Desk. Voice and telephony are deliberately not connected yet.</p></main>;}
