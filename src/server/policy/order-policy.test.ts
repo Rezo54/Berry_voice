@@ -1,0 +1,3 @@
+import {describe,expect,it} from "vitest";import {canCommitOrder} from "./order-policy";
+const draft={draftId:"d1",callId:"c1",tenantId:"t1",customerId:"cust1",lines:[],revision:2,status:"AWAITING_CONFIRMATION" as const};
+describe("order commit policy",()=>{it("allows current explicitly confirmed revision",()=>expect(canCommitOrder(draft,{draftId:"d1",draftRevision:2,confirmationEventId:"evt1",idempotencyKey:"idem-1234"})).toBe(true));it("rejects stale revision",()=>expect(canCommitOrder(draft,{draftId:"d1",draftRevision:1,confirmationEventId:"evt1",idempotencyKey:"idem-1234"})).toBe(false));});
