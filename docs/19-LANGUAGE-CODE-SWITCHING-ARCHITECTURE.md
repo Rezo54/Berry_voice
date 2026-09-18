@@ -61,8 +61,8 @@ Until isiZulu spoken-output quality passes TES acceptance testing:
 
 - Each new call starts with English as the default response language.
 - Clear Afrikaans caller speech automatically switches the current call to Afrikaans; Berry responds in Afrikaans without asking the caller to select a language.
-- Afrikaans remains active only within that call and until the caller clearly returns to English.
-- Call termination resets language state; a future call begins from the tenant/default language again.
+- Once Afrikaans is automatically activated, it remains the response language for the rest of that call. Subsequent English speech or ordinary code-switching does not automatically switch Berry back to English.
+- Berry switches from Afrikaans back to English during the same call only when the caller explicitly requests English or clearly asks to continue the conversation in English.\n- Call termination resets language state; a future call begins from the tenant/default language again.
 - isiZulu is recognition-only: Berry may interpret isiZulu input but responds in English.
 - Before acting on critical isiZulu-derived meaning, Berry reads back the interpreted product/quantity/date/name/delivery/confirmation meaning in English and asks for explicit confirmation or correction.
 - isiZulu recognition must never silently become transaction confirmation.
