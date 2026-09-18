@@ -8,10 +8,10 @@ const eventLabels:Record<string,string>={"session.created":"Session created","se
 
 export default function VoicePage(){
  const pcRef=useRef<RTCPeerConnection|null>(null);const dcRef=useRef<RTCDataChannel|null>(null);
- const [status,setStatus]=useState("Disconnected");const [diagnostics,setDiagnostics]=useState<Diagnostic[]>([]);const [voice,setVoice]=useState("marin");const speakingRef=useRef(false);
+ const [status,setStatus]=useState("Disconnected");const [diagnostics,setDiagnostics]=useState<Diagnostic[]>([]);const [voice,setVoice]=useState("marin");const [activeLanguage,setActiveLanguage]=useState("ENGLISH");const [afrikaansLocked,setAfrikaansLocked]=useState(false);const speakingRef=useRef(false);
  function log(label:string,detail?:string){setDiagnostics(current=>[...current.slice(-19),{at:new Date().toLocaleTimeString(),label,detail}]);}
  async function connect(){
-  setDiagnostics([]);setStatus("Connecting");log("Requesting Berry session",voice);
+  setDiagnostics([]);setActiveLanguage("ENGLISH");setAfrikaansLocked(false);setStatus("Connecting");log("Language reset","ENGLISH");log("Requesting Berry session",voice);
   try{
    const tokenResponse=await fetch("/api/realtime/client-secret",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({voice})});
    if(!tokenResponse.ok){setStatus("Server unavailable");log("Client secret failed",String(tokenResponse.status));return;}
@@ -28,14 +28,18 @@ export default function VoicePage(){
   }catch(error){setStatus("Connection error");log("Connection error",error instanceof Error?error.message:"unknown");}
  }
  function audition(){const dc=dcRef.current;if(!dc||dc.readyState!=="open"){log("Audition unavailable","Connect first");return;}dc.send(JSON.stringify({type:"response.create",response:{instructions:`Read this audition text exactly once, naturally, with the configured Berry South African delivery. Do not add any introduction or commentary: ${auditionText}`}}));log("Audition requested",voice);}
- function disconnect(){pcRef.current?.getSenders().forEach(sender=>sender.track?.stop());pcRef.current?.close();pcRef.current=null;dcRef.current=null;setStatus("Disconnected");log("Disconnected");}
+ function lockAfrikaans(){setActiveLanguage("AFRIKAANS");setAfrikaansLocked(true);log("Afrikaans detected");log("Language switched","AFRIKAANS");log("Afrikaans lock","ON");const dc=dcRef.current;if(dc?.readyState==="open")dc.send(JSON.stringify({type:"session.update",session:{instructions:"The active response language for this call is now Afrikaans. Respond in Afrikaans. Keep Afrikaans locked even if the caller subsequently speaks English. Switch to English only if the caller explicitly requests that you switch to English."}}));}
+ function unlockEnglish(){setActiveLanguage("ENGLISH");setAfrikaansLocked(false);log("Explicit English request");log("Language switched","ENGLISH");log("Afrikaans lock","OFF");const dc=dcRef.current;if(dc?.readyState==="open")dc.send(JSON.stringify({type:"session.update",session:{instructions:"The caller explicitly requested English. The active response language is now English."}}));}
+ function disconnect(){pcRef.current?.getSenders().forEach(sender=>sender.track?.stop());pcRef.current?.close();pcRef.current=null;dcRef.current=null;setStatus("Disconnected");setActiveLanguage("ENGLISH");setAfrikaansLocked(false);log("Call ended");log("Language reset","ENGLISH");}
  return <main style={{fontFamily:"system-ui",maxWidth:800,margin:"48px auto",padding:24}}>
   <h1>Talk to Berry — Development</h1><p>This browser session tests Berry's realtime voice persona only. It cannot create a real order.</p>
   <h2>Voice audition</h2><p>Select a candidate, connect, then play the identical South African test sentence. Disconnect before changing voices.</p>
   <select value={voice} onChange={e=>setVoice(e.target.value)} disabled={status!=="Disconnected"}>{voices.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}</select>{" "}
   <button onClick={audition} disabled={!status.startsWith("Connected")}>Play standard audition</button>
   <p><small>{auditionText}</small></p>
-  <p><strong>Status:</strong> {status}</p><button onClick={connect} disabled={status!=="Disconnected"}>Connect microphone</button>{" "}<button onClick={disconnect}>Disconnect</button>
+  <p><strong>Status:</strong> {status}</p><p><strong>Active language:</strong> {activeLanguage} &nbsp; <strong>Afrikaans lock:</strong> {afrikaansLocked?"ON":"OFF"}</p>
+  <details><summary>Language diagnostics test controls</summary><p><button onClick={lockAfrikaans} disabled={!status.startsWith("Connected")}>Simulate Afrikaans detected</button>{" "}<button onClick={unlockEnglish} disabled={!afrikaansLocked}>Simulate explicit English request</button></p></details>
+  <button onClick={connect} disabled={status!=="Disconnected"}>Connect microphone</button>{" "}<button onClick={disconnect}>Disconnect</button>
   <h2>Diagnostics</h2>{diagnostics.length===0?<p>No events yet.</p>:<ol>{diagnostics.map((item,index)=><li key={index}><strong>{item.at}</strong> — {item.label}{item.detail?` (${item.detail})`:""}</li>)}</ol>}
  </main>;
 }
