@@ -54,3 +54,16 @@ For every candidate Berry ZA voice:
 
 ## Release rule
 Do not market a language as production-supported merely because the model can generate it. TES must pass behavioural, pronunciation, number/SKU, constraint and voice-quality acceptance tests for that language on the selected voice profile.
+
+
+## Current Berry ZA runtime policy — 2026-09-18
+Until isiZulu spoken-output quality passes TES acceptance testing:
+
+- Each new call starts with English as the default response language.
+- Clear Afrikaans caller speech automatically switches the current call to Afrikaans; Berry responds in Afrikaans without asking the caller to select a language.
+- Afrikaans remains active only within that call and until the caller clearly returns to English.
+- Call termination resets language state; a future call begins from the tenant/default language again.
+- isiZulu is recognition-only: Berry may interpret isiZulu input but responds in English.
+- Before acting on critical isiZulu-derived meaning, Berry reads back the interpreted product/quantity/date/name/delivery/confirmation meaning in English and asks for explicit confirmation or correction.
+- isiZulu recognition must never silently become transaction confirmation.
+- Once an isiZulu voice profile passes pronunciation and behavioural acceptance, TES may change this policy through a versioned voice/language configuration rather than an ad-hoc prompt change.
