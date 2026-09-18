@@ -1,38 +1,56 @@
 # Berry Voice — Language & Code-Switching Architecture
 
 ## Principle
-Berry may support multiple tenant-approved languages while retaining the same business scope, transaction controls and security boundaries.
+Berry supports tenant-approved languages while retaining the same business scope, transaction controls, constraints and security boundaries.
 
-## South African baseline
-Initial target languages:
-- English (en-ZA) — primary development baseline.
-- isiZulu (zu-ZA) — first additional South African language candidate.
+## South African baseline languages
+The baseline Berry South Africa language set is:
+- **English — en-ZA**
+- **Afrikaans — af-ZA**
+- **isiZulu — zu-ZA**
+
+These are first-class target languages for Berry ZA. Production approval remains per voice profile and per language after testing.
 
 ## Behaviour
 Where enabled for the tenant/workflow, Berry may:
-- greet/respond in isiZulu;
-- continue an order conversation in isiZulu;
-- understand natural code-switching between South African English and isiZulu;
-- switch language when the customer explicitly asks;
-- preserve product/SKU identifiers and quantities accurately across language switches.
+- greet and conduct the business workflow in English, Afrikaans or isiZulu;
+- switch language when the customer explicitly requests it;
+- follow natural code-switching where supported and tested;
+- preserve product/SKU identifiers, quantities, currency and confirmation meaning across language switches;
+- retain the same business/domain constraints regardless of language.
 
-Language switching never expands Berry beyond the approved business domain.
+Language switching never expands Berry beyond the approved business domain or changes transaction authority.
+
+## Language selection
+A tenant may configure a default language. A customer/caller preference may be retained as an approved structured preference. Caller speech may also trigger a supported language change during a session.
+
+Berry should not repeatedly ask for language selection when the customer's language is already clear.
 
 ## Voice quality
-Language understanding and spoken accent/naturalness are separate acceptance criteria. A model may understand isiZulu while a selected provider voice still sounds unnatural. Each TES voice profile therefore records approved languages and tested quality.
+Language understanding and spoken naturalness are separate acceptance criteria. Each TES voice profile records approved languages and tested quality. A voice can therefore be approved for English but not yet approved for Afrikaans or isiZulu.
 
-## Tenant configuration
-Future voice profile metadata includes `supportedLanguages`, `primaryLanguage`, and `codeSwitchingPolicy`. Clients preview/test the actual voice-language combination before production approval.
+## Tenant voice profile metadata
+Future voice profiles include:
+- primaryLanguage;
+- supportedLanguages;
+- approvedLanguages;
+- codeSwitchingPolicy;
+- languageTestVersion.
 
-## Tests
-- English → isiZulu switch;
-- isiZulu → English switch;
-- natural English/isiZulu code-switching;
-- South African names/place names;
-- quantities and SKU names while speaking isiZulu;
-- correction after a language switch;
-- off-topic question in isiZulu still follows domain policy;
-- confirmation remains explicit and unambiguous.
+## Test matrix
+For every candidate Berry ZA voice:
+1. English-only order conversation.
+2. Afrikaans-only order conversation.
+3. isiZulu-only order conversation.
+4. English ↔ Afrikaans switching.
+5. English ↔ isiZulu switching.
+6. Natural mixed-language conversation where appropriate.
+7. South African names and place names.
+8. Quantities, money and SKU names in each language.
+9. Correction after a language switch.
+10. Off-topic request in each language still follows the same domain/cut-off policy.
+11. Constraint escalation in each language conveys the same business outcome.
+12. Final order confirmation remains explicit and unambiguous.
 
 ## Release rule
-Do not market a language as production-supported merely because the model can generate it. TES must pass behavioural, pronunciation, number/SKU and voice-quality acceptance tests for the selected voice profile.
+Do not market a language as production-supported merely because the model can generate it. TES must pass behavioural, pronunciation, number/SKU, constraint and voice-quality acceptance tests for that language on the selected voice profile.
