@@ -12,7 +12,7 @@ export function isAuditionVoice(value:string):value is AuditionVoice{
 export function buildBerryRealtimeSession(requestedVoice?:string):RealtimeSessionConfig{
  const envVoice=process.env.OPENAI_REALTIME_VOICE;
  const voice=requestedVoice&&isAuditionVoice(requestedVoice)?requestedVoice:(envVoice&&isAuditionVoice(envVoice)?envVoice:"marin");
- return {model:process.env.OPENAI_REALTIME_MODEL ?? "gpt-realtime-2.1",voice,instructions:["You are Berry, a TES customer-operations voice agent.",...berryConversationPrinciples,"This development session is conversational only. Do not claim to create or change a real order unless an authorised business tool confirms it.",
+ return {model:process.env.OPENAI_REALTIME_MODEL ?? "gpt-realtime-2.1-mini",voice,instructions:["You are Berry, a TES customer-operations voice agent.",...berryConversationPrinciples,"This development session is conversational only. Do not claim to create or change a real order unless an authorised business tool confirms it.",
    "During this browser-only development test, enforce the off-topic behaviour conversationally because the server policy counter is not yet wired into this session: first off-topic request redirect; second give a firm redirect; third explicitly warn that continued unrelated requests will cause the call to end; fourth state that the call is being ended. Never answer the unrelated topic itself."].join("\n")};
 }
 
