@@ -1,0 +1,3 @@
+import {describe,expect,it} from "vitest";import {evaluateNumericConstraints} from "./constraint-policy";
+const rule={constraintCode:"ORDER_TOTAL_MAX",tenantId:"t1",workflow:"ORDER_DESK",metric:"order.totalUnits",operator:"GT" as const,threshold:2000,action:"ESCALATE" as const,escalationRole:"SALES_MANAGER",enabled:true,version:"1"};
+describe("business constraints",()=>{it("allows normal order",()=>expect(evaluateNumericConstraints("order.totalUnits",100,[rule]).action).toBe("ALLOW"));it("escalates 10000 loaves",()=>expect(evaluateNumericConstraints("order.totalUnits",10000,[rule]).action).toBe("ESCALATE"));});
